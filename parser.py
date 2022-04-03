@@ -35,6 +35,7 @@ class TransactionWithRewards(NamedTuple):
 
 
 _DATE_FORMAT = "%d/%m/%Y"
+_DATE_FORMAT_ALT = "%d/%m/%Y %H:%M:%S"
 
 # Convert Amount to Number
 def try_sanitize_amount(amnts):
@@ -49,16 +50,22 @@ def try_parse_date(ds: str):
     try:
         return datetime.strptime(ds, _DATE_FORMAT)
     except:
-        return None
+        try:
+            return datetime.strptime(ds, _DATE_FORMAT_ALT)
+        except:
+            return None
+    return None
+
 
 # parses credit card statement
 def yield_credit_infos(fname: str, show_diners_rewards: bool):
     
     res = tabula.read_pdf(fname ,pages='all', stream=True)
     def try_transaction(line):
-        transaction_date = line[0]
+        transaction_date = str(line[0]).replace("null ", "")
         amount = line[-1]
         details = line[1]
+
         transaction_date = try_parse_date(transaction_date)
         if transaction_date is None:
             # If start of line is not Date skip,
