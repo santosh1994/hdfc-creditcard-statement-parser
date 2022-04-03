@@ -35,6 +35,7 @@ class TransactionWithRewards(NamedTuple):
 
 
 _DATE_FORMAT = "%d/%m/%Y"
+_DATE_FORMAT_ALT = "%d/%m/%Y %H:%M:%S"
 
 # Convert Amount to Number
 def try_sanitize_amount(amnts):
@@ -49,7 +50,12 @@ def try_parse_date(ds: str):
     try:
         return datetime.strptime(ds, _DATE_FORMAT)
     except:
-        return None
+        try:
+            return datetime.strptime(ds, _DATE_FORMAT_ALT)
+        except:
+            return None
+    return None
+
 
 # parses credit card statement
 def yield_credit_infos(fname: str, show_diners_rewards: bool):
