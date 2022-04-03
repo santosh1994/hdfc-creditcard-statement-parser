@@ -62,9 +62,10 @@ def yield_credit_infos(fname: str, show_diners_rewards: bool):
     
     res = tabula.read_pdf(fname ,pages='all', stream=True)
     def try_transaction(line):
-        transaction_date = line[0]
+        transaction_date = str(line[0]).replace("null ", "")
         amount = line[-1]
         details = line[1]
+
         transaction_date = try_parse_date(transaction_date)
         if transaction_date is None:
             # If start of line is not Date skip,
